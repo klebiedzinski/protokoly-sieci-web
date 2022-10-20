@@ -1,0 +1,7 @@
+curl 
+-X POST - inna metoda niz GET
+scp - kopiowanie
+sftp - kopiowanie przy ftp 
+
+head- wyswietlenie opcji
+
