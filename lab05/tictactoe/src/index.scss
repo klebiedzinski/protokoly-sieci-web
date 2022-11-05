@@ -1,0 +1,16 @@
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.field{
+    margin: 0.2em;
+    flex-basis: 25%;
+    height: 15em;
+    border: 2px solid teal;
+    background-color: white;
+    &:hover{
+        box-shadow: 8px 8px 24px 0px teal;
+        cursor: pointer;
+    }
+}

@@ -1,32 +1,17 @@
-* {
-  padding: 0;
-  margin: 0;
-  font-family: 'Itim', cursive;
-}
-
 .container {
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-template-rows: 33% 33% 33%;
-  max-width: 300px;
-}
-.tile {
-  border: 1px solid white;
-  min-width: 100px;
-  min-height: 100px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  font-size: 50px;
+}
+
+.field {
+  margin: 0.2em;
+  flex-basis: 25%;
+  height: 15em;
+  border: 2px solid teal;
+  background-color: white;
+}
+.field:hover {
+  box-shadow: 8px 8px 24px 0px teal;
   cursor: pointer;
-}
-.playerX {
-  color: #09C372;
-}
-
-.playerO {
-  color: #498AFB;
-}
-
-
+}/*# sourceMappingURL=index.css.map */
