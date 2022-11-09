@@ -4,6 +4,10 @@
   justify-content: center;
 }
 
+.info, h1 {
+  text-align: center;
+}
+
 .field {
   margin: 0.2em;
   flex-basis: 25%;
