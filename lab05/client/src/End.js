@@ -1,6 +1,7 @@
 const End = ({winner}) => {
     return ( 
-        <div className="end">{winner} won!</div>
+        (winner === "draw") ? <div className="end">Its a draw</div> : <div className="end">{winner} won!</div>
+        
      );
 }
  

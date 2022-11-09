@@ -13,8 +13,11 @@ class Game {
         this.id = uuid.v4();
         this.status = "live"
     }
+    checkDraw(){
+        return this.board.filter(field => (field === "x") || (field ==="o")).length === 9
+    }
     checkWinConditions(symbol){
-        console.log("sprawdzam czy ktos wygral")
+        
         if (this.board.filter(field => field === symbol).length >= 3){
             //horizontal
             if (this.board[0] === symbol && this.board[0] === this.board[1] && this.board[0] === this.board[2]) return true
@@ -33,27 +36,26 @@ class Game {
         else return false
         
     }
-    endTheGame(winner){
-        this.status = `${winner}`
-        console.log(`winner wygrał`)
-        return `${winner} wygrał`
-    }
+   
     makeMove(field){
-        console.log(`game: ${this.id}: ive recieved field ${field}`)
+        // console.log(`game: ${this.id}: ive recieved field ${field}`)
         this.board = this.board.map((el,index) => (index==field) ? "x" : el)
         if (this.checkWinConditions("x")) {
-            console.log("wygrales wiec kurwa status ci daje ended rozumiesz")
-            this.status = `player`
-            console.log(this.status)
+            this.status = `${this.player}`
         }
         else{
-            //computer's move
-            if (this.status==="live"){
-                const emptyFields = this.board.map((el,index) => [el,index]).filter(el => el[0] === "").map(el => el[1])
-                const fieldToChange = emptyFields[Math.floor((Math.random()*emptyFields.length))]
-                this.board = this.board.map((el,index) => (index===fieldToChange) ? "o" : el)
-                if (this.checkWinConditions("o")) this.status = "bot"
+            if (this.checkDraw()) this.status = "draw"
+            else{
+                //bot's move
+                if (this.status==="live"){
+                    const emptyFields = this.board.map((el,index) => [el,index]).filter(el => el[0] === "").map(el => el[1])
+                    const fieldToChange = emptyFields[Math.floor((Math.random()*emptyFields.length))]
+                    this.board = this.board.map((el,index) => (index===fieldToChange) ? "o" : el)
+                    if (this.checkWinConditions("o")) this.status = "bot"
+                }
             }
+            
+           
         }
         return {
             board: this.board,

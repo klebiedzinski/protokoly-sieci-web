@@ -12,7 +12,8 @@
     border: 2px solid gray;
     background-color: white;
     &:hover{
-        box-shadow: 8px 8px 24px 0px teal;
+        // box-shadow: 8px 8px 24px 0px teal;
+        background-color: grey;
         cursor: pointer;
     }
     
