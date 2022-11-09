@@ -7,13 +7,13 @@
     text-align: center;
 }
 .field{
-    margin: 0.2em;
-    flex-basis: 25%;
+    flex-basis: 30%;
     height: 15em;
-    border: 2px solid teal;
+    border: 2px solid gray;
     background-color: white;
     &:hover{
         box-shadow: 8px 8px 24px 0px teal;
         cursor: pointer;
     }
+    
 }
