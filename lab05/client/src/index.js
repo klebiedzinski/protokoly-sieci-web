@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './Styles/index.css';
-import TicTacToe from './TicTacToe';
+import App from './App.js'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <TicTacToe />
+    <App/>
   </React.StrictMode>
 );
 

@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require("body-parser")
 const uuid = require('uuid');
+const cors = require('cors')
 const _ = require('lodash');
 const { urlencoded } = require('body-parser');
 
@@ -10,11 +11,11 @@ class Game {
         this.player = player;
         this.board = [...Array(9)].map(_ => (''))
         this.id = uuid.v4();
-        this.status = "started"
+        this.status = "live"
     }
-    checkWinConditions(symbol="x"){
+    checkWinConditions(symbol){
         console.log("sprawdzam czy ktos wygral")
-        if (this.board.filter(field => field === symbol).length === 3){
+        if (this.board.filter(field => field === symbol).length >= 3){
             //horizontal
             if (this.board[0] === symbol && this.board[0] === this.board[1] && this.board[0] === this.board[2]) return true
             if (this.board[3] === symbol && this.board[3] === this.board[4] && this.board[5] === this.board[3]) return true
@@ -32,23 +33,32 @@ class Game {
         else return false
         
     }
-    endTheGame(){
-        this.status = "ended"
-        console.log(this.status)
-        return "koniec gry"
+    endTheGame(winner){
+        this.status = `${winner}`
+        console.log(`winner wygrał`)
+        return `${winner} wygrał`
     }
     makeMove(field){
-        console.log("ive recieved field"+field)
-        this.board = this.board.map((el,index) => (index.toString()===field) ? "x" : el)
-        if (this.checkWinConditions()) this.endTheGame()
+        console.log(`game: ${this.id}: ive recieved field ${field}`)
+        this.board = this.board.map((el,index) => (index==field) ? "x" : el)
+        if (this.checkWinConditions("x")) {
+            console.log("wygrales wiec kurwa status ci daje ended rozumiesz")
+            this.status = `player`
+            console.log(this.status)
+        }
         else{
             //computer's move
-            const emptyFields = this.board.map((el,index) => [el,index]).filter(el => el[0] === "").map(el => el[1])
-            const fieldToChange = emptyFields[Math.floor((Math.random()*emptyFields.length))]
-            this.board = this.board.map((el,index) => (index===fieldToChange) ? "o" : el)
-            this.checkWinConditions("o")
+            if (this.status==="live"){
+                const emptyFields = this.board.map((el,index) => [el,index]).filter(el => el[0] === "").map(el => el[1])
+                const fieldToChange = emptyFields[Math.floor((Math.random()*emptyFields.length))]
+                this.board = this.board.map((el,index) => (index===fieldToChange) ? "o" : el)
+                if (this.checkWinConditions("o")) this.status = "bot"
+            }
         }
-        return this.board
+        return {
+            board: this.board,
+            status: this.status
+        }
     }
 }
 
@@ -59,30 +69,43 @@ class Datebase {
     newGame(player) {
         const newGame = new Game(player)
         this.games.push(newGame);
-        return `New game had been added! Id:${newGame.id}`
+        return `New game had been added! Id:${newGame.id}, player ${player}`
     }
 }
 const app = express();
 
+
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
-
+app.use(cors({origin: "*"}))
 
 const db = new Datebase();
 
 
 app.post("/create", (req, res) => {
     const name = req.body.name;
-    return res.send({response: db.newGame(name)})
+    return res.send(
+        {
+            response: db.newGame(name),
+            board: [...Array(9)].map(_ => ('')),
+            gameId: db.games.find(game => game.player === name).id
+        }
+    )
 })
 app.get("/games", (req, res) => {
     return res.send(db.games)
 })
 app.post("/move", (req,res) => {
     const {id, field} = req.body;
-    (db.games.find(game => game.id === id) === undefined) ? res.send({status: 404, response: `cannot find a game with id of ${id}`})
-    : res.send(db.games.find(game => game.id === id).makeMove(field))
+    
+    if (db.games.find(game => game.id === id) === undefined) res.send({status: 404, response: `cannot find a game with id of ${id}`})
+    else {
+        res.send(db.games.find(game => game.id === id).makeMove(field))
+    }
 })
+
+
 
 
 
