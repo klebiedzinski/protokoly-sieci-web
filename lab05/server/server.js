@@ -2,8 +2,6 @@ const express = require('express')
 const bodyParser = require("body-parser")
 const uuid = require('uuid');
 const cors = require('cors')
-const _ = require('lodash');
-const { urlencoded } = require('body-parser');
 
 
 class Game {
@@ -11,14 +9,14 @@ class Game {
         this.player = player;
         this.board = [...Array(9)].map(_ => (''))
         this.id = uuid.v4();
-        this.status = "live"
+        this.status = "live" // live, draw or winningPlayer
     }
     checkDraw(){
         return this.board.filter(field => (field === "x") || (field ==="o")).length === 9
     }
     checkWinConditions(symbol){
         
-        if (this.board.filter(field => field === symbol).length >= 3){
+        if (this.board.filter(field => field === symbol).length >= 3){ // if a player marked on a board at least 3 times
             //horizontal
             if (this.board[0] === symbol && this.board[0] === this.board[1] && this.board[0] === this.board[2]) return true
             if (this.board[3] === symbol && this.board[3] === this.board[4] && this.board[5] === this.board[3]) return true
@@ -38,24 +36,24 @@ class Game {
     }
    
     makeMove(field){
-        // console.log(`game: ${this.id}: ive recieved field ${field}`)
-        this.board = this.board.map((el,index) => (index==field) ? "x" : el)
-        if (this.checkWinConditions("x")) {
-            this.status = `${this.player}`
-        }
-        else{
-            if (this.checkDraw()) this.status = "draw"
+        if (this.status==="live"){
+            // console.log(`game: ${this.id}: ive recieved field ${field}`)
+            this.board = this.board.map((el,index) => (index==field) ? "x" : el)
+            if (this.checkWinConditions("x")) {
+                this.status = `${this.player}`
+            }
             else{
-                //bot's move
-                if (this.status==="live"){
-                    const emptyFields = this.board.map((el,index) => [el,index]).filter(el => el[0] === "").map(el => el[1])
-                    const fieldToChange = emptyFields[Math.floor((Math.random()*emptyFields.length))]
-                    this.board = this.board.map((el,index) => (index===fieldToChange) ? "o" : el)
-                    if (this.checkWinConditions("o")) this.status = "bot"
+                if (this.checkDraw()) this.status = "draw"
+                else{
+                    //bot's move
+                    if (this.status==="live"){
+                        const emptyFields = this.board.map((el,index) => [el,index]).filter(el => el[0] === "").map(el => el[1])
+                        const fieldToChange = emptyFields[Math.floor((Math.random()*emptyFields.length))]
+                        this.board = this.board.map((el,index) => (index===fieldToChange) ? "o" : el)
+                        if (this.checkWinConditions("o")) this.status = "bot"
+                    }
                 }
             }
-            
-           
         }
         return {
             board: this.board,
@@ -63,6 +61,7 @@ class Game {
         }
     }
 }
+
 
 class Datebase {
     constructor() {
@@ -74,15 +73,13 @@ class Datebase {
         return `New game had been added! Id:${newGame.id}, player ${player}`
     }
 }
+
+const db = new Datebase();
+
 const app = express();
-
-
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 app.use(cors({origin: "*"}))
-
-const db = new Datebase();
 
 
 app.post("/create", (req, res) => {
@@ -95,21 +92,18 @@ app.post("/create", (req, res) => {
         }
     )
 })
+
 app.get("/games", (req, res) => {
     return res.send(db.games)
 })
+
 app.post("/move", (req,res) => {
     const {id, field} = req.body;
-    
     if (db.games.find(game => game.id === id) === undefined) res.send({status: 404, response: `cannot find a game with id of ${id}`})
     else {
         res.send(db.games.find(game => game.id === id).makeMove(field))
     }
 })
-
-
-
-
 
 app.listen(5000, () => {
     console.log("its alive on 5000")

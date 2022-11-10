@@ -2,15 +2,15 @@ const Start = ({handleStart,setPlayersName}) => {
 
     return ( 
         <div className="start">
-            <button className="start" onClick={handleStart}>
-                Start
-            </button>
             <input
                 type="text"
-                placeholder="Title"
+                placeholder="Enter your nickname"
                 required
                 onChange = {(e) => setPlayersName(e.target.value)}
             />
+            <button onClick={handleStart}>
+                Start
+            </button>
         </div>
      );
 }

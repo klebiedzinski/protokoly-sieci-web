@@ -3,10 +3,9 @@ import Start from "./Start";
 import End from "./End";
 import TicTacToe from './TicTacToe'
 import axios from "axios";
+
 const App = () => {
-    const [gameId, setGameId] = useState(0)
-    const [board,setBoard] = useState(null)
-    const [gameStatus, setGameStatus] = useState("live")
+
     const createNewGame = (playersName) => {
         axios.post('http://localhost:5000/create', {
           "name": playersName
@@ -24,14 +23,15 @@ const App = () => {
             
         })
         .catch(err => console.log(err))
-      }
+    }
+
     const handleStart = () => {
         setGameBegan(true)
         createNewGame(playersName)
     }
+
     const handleClickFields = async (field) => {
-        console.log(board)
-        await axios.post('http://localhost:5000/move', {
+        axios.post('http://localhost:5000/move', {
           id: gameId,
           field: field
         })
@@ -43,16 +43,16 @@ const App = () => {
                 }
             })
             const newStatus = res.data.status
-            // console.log(newStatus)
             setBoard(newBoard)
             setGameStatus(newStatus)
-            
-            
-
           })
           .catch(err => console.log(err))
           console.log(gameStatus)
       }
+
+    const [gameId, setGameId] = useState(0)
+    const [board,setBoard] = useState(null)
+    const [gameStatus, setGameStatus] = useState("live")
     const [playersName,setPlayersName] = useState("Player")
     const [gameBegan,setGameBegan] = useState(false)
     
