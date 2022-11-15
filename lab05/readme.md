@@ -1,0 +1,1 @@
+![polecenie](https://raw.githubusercontent.com/klebiedzinski/protokoly-sieci-web/main/lab05/polecenie.png)
