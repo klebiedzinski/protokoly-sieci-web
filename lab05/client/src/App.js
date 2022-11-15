@@ -61,7 +61,6 @@ const App = () => {
             {!gameBegan && <Start handleStart={handleStart} setPlayersName={setPlayersName}/> }
             {board && <TicTacToe board={board} gameId={gameId} setBoard={setBoard} handleClickFields={handleClickFields}/>}
             {gameStatus!=="live" && <End winner={gameStatus}/>}
-            
         </div>
      );
 }
